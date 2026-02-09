@@ -11,7 +11,6 @@ const now = new Date();
 const currentDir = codexSessionPath + "/" + now.getFullYear() + "/" + (now.getMonth() + 1).toString().padStart(2, '0') + "/" + now.getDate().toString().padStart(2, '0');
 console.log("Watching directory:", currentDir);
 console.log("On port:", port);
-var k = 0
 let lastText = "";
 
 const types = ["response_item", "turn_context", "event_msg"]
@@ -26,10 +25,9 @@ function sendAction(action: string) {
 
 let lastSentAction = "";
 chokidar.watch(codexSessionPath, { ignoreInitial: true }).on("change", async (path, stats) => {
-    k++;
-    var timeStamps: number[] = [];
-    console.log("==".repeat(100));
-    console.log("Change count:", k);
+    if (!path.endsWith(".jsonl")) {
+        return;
+    }
     console.log("==".repeat(100));
     const newText = await Bun.file(path).text();
     var insertedText = "";
@@ -50,10 +48,8 @@ chokidar.watch(codexSessionPath, { ignoreInitial: true }).on("change", async (pa
                     sendAction("unblock");
                     lastSentAction = "unblock";
                 }
-                console.log(json.timestamp);
-                timeStamps.push(json.timestamp);
             } catch (error) {
-                
+                console.error("Unable to parse JSON:", line);
             }
         }
             
