@@ -25,8 +25,7 @@ function sendAction(action: string) {
 
 let lastText = "";
 let lastSentAction = "";
-// const watcher = 
-const watcher = chokidar.watch(currentDir, { ignoreInitial: true });
+const watcher = chokidar.watch(codexSessionPath, { ignoreInitial: true });
 const handler = async (path: string) => {
     if (!path.endsWith(".jsonl")) {
         return;

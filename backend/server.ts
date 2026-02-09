@@ -22,7 +22,7 @@ app.get("/ws", upgradeWebSocket((c) => {
             clients.add(ws);
         },
         onMessage: (event, ws) => {
-            console.log("got message", event.data);
+            // console.log("got message", event.data);
         },
         onClose: (evt, ws) => {
             console.log("WebSocket closed");

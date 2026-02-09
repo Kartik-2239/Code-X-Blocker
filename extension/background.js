@@ -1,7 +1,8 @@
 let socket = null;
+const port = 3000;
 
 function connect() {
-  fetch('http://localhost:3000/current-status').then(response => response.json()).then(data => {
+  fetch(`http://localhost:${port}/current-status`).then(response => response.json()).then(data => {
     const action = data.status === 'blocked' ? 'block' : 'unblock';
     chrome.tabs.query({ url: ['*://twitter.com/*', '*://x.com/*'] }, (tabs) => {
       for (const tab of tabs) {
@@ -10,7 +11,7 @@ function connect() {
     });
   });
 
-  socket = new WebSocket('ws://localhost:3000/ws');
+  socket = new WebSocket(`ws://localhost:${port}/ws`);
 
   socket.onopen = () => {
     console.log('WebSocket opened');
