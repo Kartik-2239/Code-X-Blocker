@@ -2,11 +2,12 @@ let socket = null;
 
 function connect() {
   fetch('http://localhost:3000/current-status').then(response => response.json()).then(data => {
-    if (data.status === 'blocked') {
-      showBlock();
-    } else {
-      removeBlock();
-    }
+    const action = data.status === 'blocked' ? 'block' : 'unblock';
+    chrome.tabs.query({ url: ['*://twitter.com/*', '*://x.com/*'] }, (tabs) => {
+      for (const tab of tabs) {
+        chrome.tabs.sendMessage(tab.id, { action: 'event', data: JSON.stringify({ data: action }) }).catch(() => {});
+      }
+    });
   });
 
   socket = new WebSocket('ws://localhost:3000/ws');
