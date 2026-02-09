@@ -4,13 +4,14 @@ if (!process.env.CODEX_SESSION_PATH){
     console.error("CODEX_SESSION_PATH is not set");
     process.exit(1);
 }
+
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const codexSessionPath = process.env.CODEX_SESSION_PATH || "";
 console.log("Watching:", codexSessionPath);
 console.log("On port:", port);
-let lastText = "";
 
-const types = ["response_item", "turn_context", "event_msg"]
+// main : response_item, turn_context, event_msg
+// payload : message
 
 function sendAction(action: string) {
     fetch(`http://localhost:${port}/${action}`).then(response => response.json()).then(data => {
@@ -20,10 +21,11 @@ function sendAction(action: string) {
     });
 }
 
+let lastText = "";
 let lastSentAction = "";
 const watcher = chokidar.watch(codexSessionPath, { ignoreInitial: true })
 
-watcher.on("change", async (path, stats) => {
+watcher.on("change, add", async (path, stats) => {
     if (!path.endsWith(".jsonl")) {
         return;
     }
@@ -56,6 +58,4 @@ watcher.on("change", async (path, stats) => {
     lastText = await Bun.file(path).text();
 
     console.log("File changed:", path.split("/").pop());
-
-    // sendAction("unblock");
 });

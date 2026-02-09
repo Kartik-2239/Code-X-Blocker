@@ -8,7 +8,7 @@ function connect() {
       removeBlock();
     }
   });
-  
+
   socket = new WebSocket('ws://localhost:3000/ws');
 
   socket.onopen = () => {
@@ -34,7 +34,6 @@ function connect() {
   };
 }
 
-// Keep service worker alive so WebSocket doesn't die
 setInterval(() => {
   if (socket && socket.readyState === WebSocket.OPEN) {
     socket.send('ping');
